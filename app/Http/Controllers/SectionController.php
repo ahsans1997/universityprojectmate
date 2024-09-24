@@ -60,7 +60,7 @@ class SectionController extends Controller
         return view('groups.index',[
             'sectionInfo' => $sectionInfo,
             'sectionGroups' => Group::where('section_id', $sectionInfo->id)->get(),
-            // 'userGroupCount' => UserGroup::where('section_id', $)->count(),
+            'userGroup' => UserGroup::all(),
             'requestGroup' => UserGroup::where('user_id', Auth::user()->id)->count(),
             'title' => $sectionInfo->name. ' Group List',
         ]);
@@ -102,7 +102,7 @@ class SectionController extends Controller
             Toastr::error('Section has groups. Please delete groups first');
             return redirect()->back();
         }
-        
+
         if(User::where('section_id', $section->id)->exists()){
             Toastr::error('Section has users. Please delete users first');
             return redirect()->back();

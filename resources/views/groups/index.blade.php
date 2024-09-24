@@ -8,61 +8,71 @@
     </div>
 
     <div class="col-md-12">
-        <table class="table table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Section Name</th>
-                    <th>User Limit</th>
-                    <th>Author</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($sectionGroups as $sectionGroup)
-                    <tr>
-                        <td class="text-wrap "><a href="{{ route('userGroup.groupUser', $sectionGroup->id) }}"
-                                style="color: #000">{{ $sectionGroup->name }}</a></td>
-                        <td>{{ $sectionGroup->section->name }}</td>
-                        <td>{{ $sectionGroup->max_users }}</td>
-                        <td>{{ $sectionGroup->user->firstname }} {{ $sectionGroup->user->lastname }}</td>
-                        @if (Auth::user()->id == $sectionGroup->user_id)
-                            <td class="text-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-success btn-sm sectionGroupEdit"
-                                        data-id="{{ $sectionGroup->id }}">Edit</button>
-                                    <a href="{{ route('groups.requestUserList', $sectionGroup->id) }}"
-                                        class="btn btn-info btn-sm">Request for Join List</a>
-                                    <button type="button" class="btn btn-danger btn-sm sectionGroupDelete"
-                                        data-id="{{ $sectionGroup->id }}">Delete</button>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Section Name</th>
+                            <th>User Limit</th>
+                            <th>Total Join</th>
+                            <th>Total Request</th>
+                            <th>Author</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($sectionGroups as $sectionGroup)
+                            <tr>
+                                <td class="text-wrap "><a href="{{ route('userGroup.groupUser', $sectionGroup->id) }}"
+                                        style="color: #000">{{ $sectionGroup->name }}</a></td>
+                                <td>{{ $sectionGroup->section->name }}</td>
+                                <td>{{ $sectionGroup->max_users }}</td>
+                                <td>{{ $userGroup->where('group_id', $sectionGroup->id)->where('status', 1)->count() }}</td>
+                                <td>{{ $userGroup->where('group_id', $sectionGroup->id)->where('status', 0)->count() }}</td>
+                                <td>{{ $sectionGroup->user->firstname }} {{ $sectionGroup->user->lastname }}</td>
+                                @if (Auth::user()->id == $sectionGroup->user_id)
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-success btn-sm sectionGroupEdit"
+                                                data-id="{{ $sectionGroup->id }}">Edit</button>
+                                            <a href="{{ route('groups.requestUserList', $sectionGroup->id) }}"
+                                                class="btn btn-info btn-sm">Request for Join List</a>
+                                            <button type="button" class="btn btn-danger btn-sm sectionGroupDelete"
+                                                data-id="{{ $sectionGroup->id }}">Delete</button>
 
 
-                                    <!-- Delete Form -->
-                                    <form id="deleteForm-{{ $sectionGroup->id }}"
-                                        action="{{ route('groups.destroy', $sectionGroup->id) }}" method="POST"
-                                        style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                </div>
-                            </td>
-                        @else
-                            <td class="text-center">
-                                <a href="{{ route('groups.join', $sectionGroup->id) }}" class="btn btn-info btn-sm">Request
-                                    for Join</a>
-                            </td>
-                        @endif
-                    </tr>
-                @empty
-                    <tr>
-                        <td class="text-danger text-center" colspan="50">No Group Found</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                            <!-- Delete Form -->
+                                            <form id="deleteForm-{{ $sectionGroup->id }}"
+                                                action="{{ route('groups.destroy', $sectionGroup->id) }}" method="POST"
+                                                style="display:none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        </div>
+                                    </td>
+                                @else
+                                    <td class="text-center">
+                                        <a href="{{ route('groups.join', $sectionGroup->id) }}"
+                                            class="btn btn-info btn-sm">Request
+                                            for Join</a>
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-danger text-center" colspan="50">No Group Found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
-    
-    <div class="col-md-12">
+
+    <div class="col-md-12 mt-2">
         <a href="{{ route('sections.index') }}" class="btn btn-info">Back</a>
     </div>
 
@@ -174,6 +184,17 @@
                     $('#deleteForm-' + sectionGroupId).submit();
 
                 }
+            });
+        });
+        $(document).ready(function() {
+            $('.table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
             });
         });
     </script>

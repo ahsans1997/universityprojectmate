@@ -10,45 +10,50 @@
     @endif
 
     <div class="col-md-12">
-        <table class="table table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Code</th>
-                    <th>Name</th>
-                    @if (Auth::user()->is_admin)
-                        <th class="text-center">Action</th>
-                    @endif
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($sections as $section)
-                    <tr>
-                        <td>{{ $section->code }}</td>
-                        <td class="text-wrap "><a href="{{ route('sections.show', $section->id) }}"
-                                style="color: #000">{{ $section->name }}</a></td>
-                        @if (Auth::user()->is_admin)
-                            <td class="text-center">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-success btn-sm sectionEdit"
-                                        data-id="{{ $section->id }}">Edit</button>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Section Name</th>
+                            @if (Auth::user()->is_admin)
+                                <th class="text-center">Action</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($sections as $section)
+                            <tr>
+                                <td>{{ $section->code }}</td>
+                                <td class="text-wrap "><a href="{{ route('sections.show', $section->id) }}"
+                                        style="color: #000">{{ $section->name }}</a></td>
+                                @if (Auth::user()->is_admin)
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-success btn-sm sectionEdit"
+                                                data-id="{{ $section->id }}">Edit</button>
 
-                                    <button type="button" class="btn btn-danger btn-sm sectionDelete"
-                                        data-id="{{ $section->id }}">Delete</button>
-                                    <!-- Delete Form -->
-                                    <form id="deleteForm-{{ $section->id }}"
-                                        action="{{ route('sections.destroy', $section->id) }}" method="POST"
-                                        style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                </div>
-                            </td>
-                        @endif
+                                            <button type="button" class="btn btn-danger btn-sm sectionDelete"
+                                                data-id="{{ $section->id }}">Delete</button>
+                                            <!-- Delete Form -->
+                                            <form id="deleteForm-{{ $section->id }}"
+                                                action="{{ route('sections.destroy', $section->id) }}" method="POST"
+                                                style="display:none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        </div>
+                                    </td>
+                                @endif
 
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <!-- Modal -->
@@ -155,6 +160,17 @@
                     $('#deleteForm-' + sectionId).submit();
 
                 }
+            });
+        });
+        $(document).ready(function() {
+            $('.table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
             });
         });
     </script>
